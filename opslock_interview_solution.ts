@@ -14,6 +14,41 @@ const usershifts = <IShift[]>[
   }
 ];
 
+const globalShiftList = <IShift[]>[
+	{
+		start: '0000',
+		end: '2359'
+	},
+	{
+		start: '0600',
+		end: '1800'
+	},
+	{
+		start: '0000',
+		end: '1200'
+	},
+	{
+		start: '0600',
+		end: '1200'
+	},
+	{
+		start: '1800',
+		end: '2359'
+	},
+	{
+		start: '0000',
+		end: '0600'
+	},
+	{
+		start: '1200',
+		end: '2359'
+	},
+	{
+		start: '1200',
+		end: '1800'
+	}
+];
+
 function convertShiftTimeToNumber(shiftTime: string): number {
   return parseInt(shiftTime.substring(0, 2));
 }
@@ -29,19 +64,17 @@ function getAllNumbersInRange(
   return numbersInRangeArray;
 }
 
-function selectedShift(startTime: string, endTime: string): string {
+function selectedShift(startTime: string, endTime: string): boolean {
   let startTimeToNumber = convertShiftTimeToNumber(startTime);
   let endTimeToNumber = convertShiftTimeToNumber(endTime);
-  let startTimeIsValid: boolean = true;
-  let endTimeIsValid: boolean = true;
   let timeRangeIsValid: boolean = true;
 
   if (startTime === endTime) {
-    return "Your shift start time is same as your shift end time";
+    return false;
   }
 
   if (startTime > endTime) {
-    return "Your shift start time is greater than your shift end time";
+    return false;
   }
 
   usershifts.forEach((shift: { start: string; end: string }) => {
@@ -74,40 +107,33 @@ function selectedShift(startTime: string, endTime: string): string {
             }
           }
         }
-
-        if (startTimeToNumber === shiftTimesRange[shiftTimesRange.length - 1]) {
-          startTimeIsValid = true;
-        }
-
-        if (endTimeToNumber === shiftTimesRange[0]) {
-          endTimeIsValid = true;
-        }
       });
     });
   });
 
-  if (!startTimeIsValid) {
-    return "Your shift start time is invalid";
-  }
-
-  if (!endTimeIsValid) {
-    return "Your shift end time is invalid";
-  }
-
   if (!timeRangeIsValid) {
-    return "Your shift time range is invalid";
+    return false;
   }
 
-  return "Your shift starts at " + startTime + " and ends at " + endTime;
+  return true;
 }
 
-//Test Cases
-console.log(selectedShift("1100", "1000"));
-console.log(selectedShift("1100", "1100"));
-console.log(selectedShift("1100", "1200"));
-console.log(selectedShift("0600", "1000"));
-console.log(selectedShift("0100", "0800"));
-console.log(selectedShift("0100", "1000"));
-console.log(selectedShift("0100", "0600"));
-console.log(selectedShift("2000", "2400"));
-console.log(selectedShift("0100", "2400"));
+
+function getAvailableShifts():  Array<Object>{
+  return globalShiftList.map((shift: any) => {
+        return selectedShift(shift.start, shift.end)
+      })
+}
+
+console.log(getAvailableShifts())
+
+// --- selectedShift Function Test Cases ---
+// console.log(selectedShift("1100", "1000"));
+// console.log(selectedShift("1100", "1100"));
+// console.log(selectedShift("1100", "1200"));
+// console.log(selectedShift("0600", "1000"));
+// console.log(selectedShift("0100", "0800"));
+// console.log(selectedShift("0100", "1000"));
+// console.log(selectedShift("0100", "0600"));
+// console.log(selectedShift("2000", "2400"));
+// console.log(selectedShift("0100", "2400"));
